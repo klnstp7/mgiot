@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.myiot.dao.DeviceLockMapper">
+    <resultMap id="BaseResultMap" type="com.migen.myiot.entity.Device">
+        <id column="dlid" jdbcType="INTEGER" property="dlid" />
+        <result column="did" jdbcType="INTEGER" property="did" />
+        <result column="ltype" jdbcType="VARCHAR" property="ltype" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="dt" jdbcType="VARCHAR" property="dt" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+      dlid,did,ltype,status,dt
+    </sql>
+
+    <select id="isExistDeviceLock"  resultType="java.lang.Integer">
+        select count(1)
+        from devicelock
+        where  did=#{did,jdbcType=INTEGER} and ltype=#{ltype,jdbcType=VARCHAR}   and status=2
+    </select>
+
+
+    <insert id="insertDeviceLock"  keyProperty="ldid" useGeneratedKeys="true" parameterType="com.migen.myiot.entity.DeviceLock">
+        INSERT INTO devicelock
+            (did,
+             ltype,
+             status,
+             dt
+             )
+            VALUES (
+                    #{did,jdbcType=INTEGER},
+                    #{ltype,jdbcType=VARCHAR},
+                    #{status,jdbcType=INTEGER},
+                    #{dt,jdbcType=VARCHAR}
+                    )
+    </insert>
+
+     <update id="deviceUnLock" parameterType="com.migen.myiot.entity.DeviceLock">
+         update devicelock set status=1 where did=#{did,jdbcType=INTEGER}  and status=2
+     </update>
+</mapper>

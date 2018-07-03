@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.iotcloud.dao.WorkTimeMapper">
+    <resultMap id="BaseResultMap" type="com.migen.iotcloud.entity.WorkTime">
+        <id column="wid" jdbcType="INTEGER" property="wid" />
+        <result column="did" jdbcType="INTEGER" property="did" />
+        <result column="startTime" jdbcType="TIMESTAMP" property="startTime" />
+        <result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
+        <result column="dts" jdbcType="INTEGER" property="dts" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="dt" jdbcType="TIMESTAMP" property="dt" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      wid,did,startTime,endTime,dts,status,dt
+    </sql>
+
+    <sql id="Cond_Where_Clause">
+        <where>
+            endTime is not null
+            <if test="did!= 0">
+                and did =#{did,jdbcType=INTEGER}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="selectByCond" parameterType="com.migen.iotcloud.condition.WorkTimeCondition" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from worktime
+        <if test="_parameter != null">
+            <include refid="Cond_Where_Clause" />
+        </if>
+        order by wid desc
+        <if test="limit > 0">
+            limit ${start},${limit}
+        </if>
+    </select>
+
+    <select id="countByCond"  resultType="java.lang.Integer">
+        select count(1) from worktime
+        <if test="_parameter != null">
+            <include refid="Cond_Where_Clause" />
+        </if>
+    </select>
+
+    <delete id="deleteWorkTime" parameterType="java.lang.Integer">
+        delete from worktime where did= #{did,jdbcType=INTEGER};
+    </delete>
+</mapper>

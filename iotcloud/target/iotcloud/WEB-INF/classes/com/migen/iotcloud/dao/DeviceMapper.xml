@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.iotcloud.dao.DeviceMapper">
+    <resultMap id="BaseResultMap" type="com.migen.iotcloud.entity.Device">
+        <id column="did" jdbcType="INTEGER" property="did" />
+        <result column="didShow" jdbcType="VARCHAR" property="didShow" />
+        <result column="moduleId" jdbcType="VARCHAR" property="moduleId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="address" jdbcType="VARCHAR" property="address" />
+        <result column="genCom" jdbcType="VARCHAR" property="genCom" />
+        <result column="useCom" jdbcType="VARCHAR" property="useCom" />
+        <result column="spwd" jdbcType="VARCHAR" property="spwd" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="dt" jdbcType="VARCHAR" property="dt" />
+        <result column="runStatus" jdbcType="INTEGER" property="runStatus" />
+        <result column="cid" jdbcType="INTEGER" property="cid" />
+        <result column="plcName" jdbcType="VARCHAR" property="plcName" />
+        <result column="cids" jdbcType="VARCHAR" property="cids" />
+        <result column="configStatus" jdbcType="INTEGER" property="configStatus" />
+        <result column="pwdvalid" jdbcType="INTEGER" property="pwdvalid" />
+        <result column="version" jdbcType="VARCHAR" property="version" />
+        <result column="socket" jdbcType="INTEGER" property="socket" />
+        <result column="cidser" jdbcType="INTEGER" property="cidser" />
+        <result column="cidmac" jdbcType="INTEGER" property="cidmac" />
+        <result column="cidage" jdbcType="INTEGER" property="cidage" />
+        <result column="ciduse" jdbcType="INTEGER" property="ciduse" />
+        <result column="cidpoi" jdbcType="INTEGER" property="cidpoi" />
+        <result column="installyield" jdbcType="INTEGER" property="installyield" />
+        <result column="realyield" jdbcType="INTEGER" property="realyield" />
+    </resultMap>
+
+    <resultMap id="FirstResultMap" type="com.migen.iotcloud.entity.Device">
+        <id column="did" jdbcType="INTEGER" property="did" />
+        <result column="province" jdbcType="VARCHAR" property="province" />
+        <result column="city" jdbcType="VARCHAR" property="city" />
+        <result column="moduleId" jdbcType="VARCHAR" property="moduleId" />
+        <result column="useCom" jdbcType="VARCHAR" property="useCom" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="runStatus" jdbcType="INTEGER" property="runStatus" />
+        <result column="socket" jdbcType="INTEGER" property="socket" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      did,didshow,moduleid,NAME,address,gencom,usecom, spwd,STATUS,dt,runstatus,cid, plcname,cids,configstatus,pwdvalid,VERSION,SOCKET,cidser,cidmac,cidage,ciduse,cidpoi,installyield,realyield
+    </sql>
+
+    <sql id="Cond_Where_Clause">
+        <where>
+        <if test="moduleId!=null and moduleId!=''">
+            and moduleId like concat('%', #{moduleId,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="useCom!=null and useCom!=''">
+            and useCom like concat('%', #{useCom,jdbcType=VARCHAR}, '%')
+         </if>
+        <if test="status!= 0">
+            and status =#{status,jdbcType=INTEGER}
+         </if>
+        <if test="runStatus!= 0">
+            and runStatus =#{runStatus,jdbcType=INTEGER}
+         </if>
+      <!--  <if test="cid!= 0">
+            and EXISTS (
+            select 1  from ccompany c
+            where c.cid =#{cid,jdbcType=INTEGER}
+            and (c.cid = d.cidser or c.cid = d.cidmac or c.cid = d.cidage or c.cid = d.ciduse or c.cid = d.cidpoi)
+            )   　　　
+        </if>-->
+        </where>
+    </sql>
+
+    <select id="getDevices"  resultMap="FirstResultMap">
+        select l.province,l.city,d.did,d.moduleid,d.usecom,d.runstatus,d.status,d.socket from device d, locationright l
+        where d.did=l.did and l.status=1 and d.name != 'unknown' and d.plcname != 'unknown'
+        order by province,city
+    </select>
+
+   <!-- <select id="getDeviceFirst2" parameterType="int" resultMap="FirstResultMap">
+      select l.province,l.city,d.did,d.moduleid,d.usecom,d.status,d.runstatus,d.socket from device d, locationright l, ccompany c
+	  where d.did=l.did and l.status=1 and d.name != 'unknown' and d.plcname != 'unknown' and
+	  (c.cid = #{VALUE} or c.bcid like CONCAT('%', #{VALUE}, '%') ) and (c.cid = d.cidser or c.cid = d.cidmac or
+		c.cid = d.cidage or c.cid = d.ciduse or c.cid = d.cidpoi) order by province,city
+    </select>-->
+
+    <select id="selectByCond" parameterType="com.migen.iotcloud.condition.DeviceCondition" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from device d
+        <if test="_parameter != null">
+            <include refid="Cond_Where_Clause" />
+        </if>
+        order by did desc
+        <if test="limit > 0">
+            limit ${start},${limit}
+        </if>
+    </select>
+
+    <select id="countByCond" parameterType="com.migen.iotcloud.condition.DeviceCondition" resultType="java.lang.Integer">
+        select count(1) from device d
+        <if test="_parameter != null">
+            <include refid="Cond_Where_Clause" />
+        </if>
+    </select>
+
+    <select id="isExistsModuleId"  resultType="java.lang.Integer">
+        select count(1) from device
+        where moduleid=#{moduleid,jdbcType=VARCHAR}
+        and did!=#{did,jdbcType=INTEGER}
+    </select>
+
+    <select id="getActiveDevice" resultMap="BaseResultMap">
+      select
+        <include refid="Base_Column_List" />
+      from device
+      where socket=1
+    </select>
+
+    <select id="getDeviceById" parameterType="int" resultMap="BaseResultMap">
+        select  <include refid="Base_Column_List" /> from device
+        where did=#{did,jdbcType=INTEGER}
+    </select>
+
+    <select id="getDeviceByModuleId" parameterType="string" resultMap="BaseResultMap">
+        select * from device
+        where moduleId=#{moduleId,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateDevice" parameterType="com.migen.iotcloud.entity.Device">
+        update  device set
+        useCom=#{useCom,jdbcType=VARCHAR},
+        name=#{name,jdbcType=VARCHAR},
+        plcName=#{plcName,jdbcType=VARCHAR},
+        cidmac=#{cidmac,jdbcType=INTEGER},
+        cidage=#{cidage,jdbcType=INTEGER},
+        ciduse=#{ciduse,jdbcType=INTEGER},
+        cidpoi=#{cidpoi,jdbcType=INTEGER},
+        address=#{address,jdbcType=VARCHAR}
+        where did=#{did,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateModule">
+        update device set moduleid=#{moduleid,jdbcType=VARCHAR} where did=#{did,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteDevice" parameterType="java.lang.Integer">
+        delete from device where did= #{did,jdbcType=INTEGER};
+    </delete>
+
+    <update id="updateStatus" >
+        update device set status =  #{status,jdbcType=INTEGER} where did = #{did,jdbcType=INTEGER}
+    </update>
+</mapper>

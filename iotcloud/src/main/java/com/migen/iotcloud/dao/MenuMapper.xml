@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.iotcloud.dao.MenuMapper">
+    <resultMap id="BaseResultMap" type="com.migen.iotcloud.entity.Menu">
+        <id column="mid" jdbcType="INTEGER" property="mid" />
+        <result column="mname" jdbcType="VARCHAR" property="mname" />
+        <result column="url" jdbcType="VARCHAR" property="url" />
+        <result column="icon" jdbcType="VARCHAR" property="icon" />
+        <result column="parentid" jdbcType="INTEGER" property="parentid" />
+        <result column="pricode" jdbcType="VARCHAR" property="pricode" />
+        <result column="visible" jdbcType="BOOLEAN" property="visible" />
+        <result column="mtype" jdbcType="INTEGER" property="mtype" />
+        <result column="ordernum" jdbcType="INTEGER" property="ordernum" />
+        <result column="dt" jdbcType="TIMESTAMP" property="dt" />
+    </resultMap>
+
+    <sql id="Cond_Where_Clause">
+        <where>
+            <if test="visible!=null">
+                and visible =#{visible,jdbcType=BOOLEAN}
+            </if>
+            <if test="mtype!= 0">
+                and mtype =#{ctype,jdbcType=INTEGER}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List">
+      t.mid,t.mname,url,t.icon,t.parentid,t.pricode,t.visible,t.mtype,t.ordernum,t.dt
+    </sql>
+
+    <select id="getAll"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from cmenu t
+    </select>
+
+    <select id="selectByCond" parameterType="com.migen.iotcloud.condition.MenuCondition" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from cmenu t
+        <if test="_parameter != null">
+            <include refid="Cond_Where_Clause" />
+        </if>
+        order by IFNULL(t.parentid,0),t.ordernum desc
+        <if test="limit > 0">
+            limit ${start},${limit}
+        </if>
+    </select>
+
+    <select id="countByCond" parameterType="com.migen.iotcloud.condition.MenuCondition" resultType="java.lang.Integer">
+        select count(1)
+        from cmenu t
+        <if test="_parameter != null">
+            <include refid="Cond_Where_Clause" />
+        </if>
+    </select>
+
+    <select id="getMenuById" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from cmenu t
+        where t.mid=#{mid,jdbcType=INTEGER}
+    </select>
+
+    <select id="checkIsExists" parameterType="com.migen.iotcloud.entity.Menu" resultType="java.lang.Integer">
+        select count(1) from cmenu t
+        where t.mname=#{mname,jdbcType=VARCHAR} and t.mid!=#{mid,jdbcType=INTEGER}
+    </select>
+
+    <select id="getChildrenByParentId"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from cmenu t
+        WHERE t.visible=1
+        and t.mtype=1
+        and IFNULL(t.parentid,0)=IFNULL(#{parentid,jdbcType=VARCHAR},0)
+        AND EXISTS (
+        SELECT 1 FROM crolepri a
+        INNER JOIN crole b ON a.rid=b.rid
+        INNER JOIN cuserrole c ON b.rid=c.rid
+        WHERE c.usrid=#{usrid,jdbcType=INTEGER}
+        AND a.mid=t.mid
+        )
+        ORDER BY t.ordernum DESC
+    </select>
+
+    <select id="getMenuByUsrId" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from cmenu t
+        WHERE t.visible=1
+        and t.mtype=1
+        AND EXISTS (
+            SELECT 1 FROM crolepri a
+            INNER JOIN crole b ON a.rid=b.rid
+            INNER JOIN cuserrole c ON b.rid=c.rid
+            WHERE c.usrid=#{usrid,jdbcType=INTEGER}
+            AND a.mid=t.mid
+        )
+        ORDER BY t.ordernum DESC
+    </select>
+
+    <insert id="insertMenu" parameterType="com.migen.iotcloud.entity.Menu">
+        insert into cmenu (mname,
+             url,
+             icon,
+             parentid,
+             pricode,
+             visible,
+             mtype,
+             ordernum,
+             dt)
+        values (#{mname,jdbcType=VARCHAR},
+         #{url,jdbcType=VARCHAR},
+        #{icon,jdbcType=VARCHAR},
+        #{parentid,jdbcType=INTEGER},
+         #{pricode,jdbcType=VARCHAR},
+         #{visible,jdbcType=BOOLEAN},
+         #{mtype,jdbcType=INTEGER},
+         #{ordernum,jdbcType=INTEGER},
+         #{dt,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <update id="updateMenu" parameterType="com.migen.iotcloud.entity.Menu">
+        update cmenu
+        set mname = #{mname,jdbcType=VARCHAR},
+          url = #{url,jdbcType=VARCHAR},
+          icon = #{icon,jdbcType=VARCHAR},
+          pricode = #{pricode,jdbcType=VARCHAR},
+          visible = #{visible,jdbcType=BOOLEAN},
+          mtype = #{mtype,jdbcType=INTEGER},
+          ordernum = #{ordernum,jdbcType=INTEGER}
+       where mid = #{mid,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteMenu" parameterType="java.lang.Integer">
+        delete from cmenu
+        where mid= #{mid,jdbcType=INTEGER}
+    </delete>
+</mapper>

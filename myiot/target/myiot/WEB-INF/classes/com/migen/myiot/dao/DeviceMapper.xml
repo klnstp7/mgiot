@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.myiot.dao.DeviceMapper">
+    <resultMap id="BaseResultMap" type="com.migen.myiot.entity.Device">
+        <id column="did" jdbcType="INTEGER" property="did" />
+        <result column="didShow" jdbcType="VARCHAR" property="didShow" />
+        <result column="moduleId" jdbcType="VARCHAR" property="moduleId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="address" jdbcType="VARCHAR" property="address" />
+        <result column="genCom" jdbcType="VARCHAR" property="genCom" />
+        <result column="useCom" jdbcType="VARCHAR" property="useCom" />
+        <result column="spwd" jdbcType="VARCHAR" property="spwd" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="dt" jdbcType="VARCHAR" property="dt" />
+        <result column="runStatus" jdbcType="INTEGER" property="runStatus" />
+        <result column="plcName" jdbcType="VARCHAR" property="plcName" />
+        <result column="cids" jdbcType="VARCHAR" property="cids" />
+        <result column="configStatus" jdbcType="INTEGER" property="configStatus" />
+        <result column="pwdvalid" jdbcType="INTEGER" property="pwdvalid" />
+        <result column="version" jdbcType="VARCHAR" property="version" />
+        <result column="socket" jdbcType="INTEGER" property="socket" />
+        <result column="cidser" jdbcType="INTEGER" property="cidser" />
+        <result column="cidmac" jdbcType="INTEGER" property="cidmac" />
+        <result column="cidage" jdbcType="INTEGER" property="cidage" />
+        <result column="ciduse" jdbcType="INTEGER" property="ciduse" />
+        <result column="cidpoi" jdbcType="INTEGER" property="cidpoi" />
+        <result column="installyield" jdbcType="INTEGER" property="installyield" />
+        <result column="realyield" jdbcType="INTEGER" property="realyield" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+      did,didshow,moduleid,NAME,address,gencom,usecom, spwd,STATUS,dt,runstatus,plcname,cids,configstatus,pwdvalid,VERSION,SOCKET,cidser,cidmac,cidage,ciduse,cidpoi,installyield,realyield
+    </sql>
+
+    <select id="loadDevices"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from device
+    </select>
+
+    <select id="getDeviceByDId" parameterType="int" resultMap="BaseResultMap">
+        select * from device
+        where  did=#{did,jdbcType=INTEGER}
+    </select>
+
+    <select id="getDeviceByModuleId" parameterType="string" resultMap="BaseResultMap">
+        select * from device
+        where moduleId=#{moduleId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getDeviceByDivShow" parameterType="string" resultMap="BaseResultMap">
+        select * from device
+        where didShow=#{didShow,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertDevice"  keyProperty="did" useGeneratedKeys="true" parameterType="com.migen.myiot.entity.Device">
+        INSERT INTO device
+            (didShow,
+             moduleId,
+             name,
+             address,
+             genCom,
+             useCom,
+             spwd,
+             plcName,
+             socket,
+             dt
+             )
+            VALUES (
+                    #{didShow,jdbcType=VARCHAR},
+                    #{moduleId,jdbcType=VARCHAR},
+                    #{name,jdbcType=VARCHAR},
+                    #{address,jdbcType=VARCHAR},
+                    #{genCom,jdbcType=VARCHAR},
+                    #{useCom,jdbcType=VARCHAR},
+                    #{spwd,jdbcType=VARCHAR},
+                    #{plcName,jdbcType=VARCHAR},
+                    #{socket,jdbcType=INTEGER},
+                    #{dt,jdbcType=VARCHAR}
+                    )
+    </insert>
+
+    <update id="updateSocket" >
+        update device set runStatus=#{runStatus,jdbcType=INTEGER}, socket =  #{socket,jdbcType=INTEGER} where did = #{did,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateInstallYield">
+        update device set installyield =  #{installyield,jdbcType=INTEGER} where did = #{did,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateRealYield">
+        update device set realyield =  #{realyield,jdbcType=INTEGER} where did = #{did,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateSpwd">
+        update device set spwd =  #{spwd,jdbcType=VARCHAR} where did = #{did,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateStatus" >
+        update device set status =  #{status,jdbcType=INTEGER} where did = #{did,jdbcType=INTEGER}
+    </update>
+</mapper>

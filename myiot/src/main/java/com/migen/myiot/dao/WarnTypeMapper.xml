@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.myiot.dao.WarnTypeMapper">
+    <resultMap id="BaseResultMap" type="com.migen.myiot.entity.WarnType">
+        <id column="wtid" jdbcType="INTEGER" property="wtid" />
+        <result column="wtype" jdbcType="INTEGER" property="wtype" />
+        <result column="wtname" jdbcType="VARCHAR" property="wtname" />
+        <result column="dt" jdbcType="TIMESTAMP" property="dt" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        wtid,wtype,wtname,dt
+    </sql>
+    <select id="getWarnTypeById" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from warntype
+        WHERE wtype=#{wtype,jdbcType=INTEGER}
+    </select>
+</mapper>

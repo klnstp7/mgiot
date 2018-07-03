@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.myiot.dao.WorkTimeMapper">
+    <resultMap id="BaseResultMap" type="com.migen.myiot.entity.WorkTime">
+        <id column="wid" jdbcType="INTEGER" property="wid" />
+        <result column="did" jdbcType="INTEGER" property="did" />
+        <result column="startTime" jdbcType="DATE" property="startTime" />
+        <result column="endTime" jdbcType="DATE" property="endTime" />
+        <result column="dts" jdbcType="INTEGER" property="dts" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="dt" jdbcType="VARCHAR" property="dt" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      wid,did,startTime,endTime,dts,status,dt
+    </sql>
+
+    <insert id="insertWorkTime"  keyProperty="wid" useGeneratedKeys="true" parameterType="com.migen.myiot.entity.WorkTime">
+        INSERT INTO worktime(
+                did,
+                startTime,
+                endTime,
+                dts,
+                status,
+                dt
+             )
+            VALUES (
+                #{did,jdbcType=INTEGER},
+                #{startTime,jdbcType=TIMESTAMP},
+                #{endTime,jdbcType=TIMESTAMP},
+                #{dts,jdbcType=INTEGER},
+                #{status,jdbcType=INTEGER},
+                #{dt,jdbcType=VARCHAR}
+            )
+    </insert>
+
+
+    <update id="updateWorkTime" parameterType="com.migen.myiot.entity.WorkTime">
+      UPDATE worktime w
+      INNER JOIN
+        (SELECT did, MAX(startTime) maxStartTime FROM worktime
+        WHERE did = #{did,jdbcType=INTEGER}) t
+        ON w.did = t.did and w.startTime=t.maxStartTime SET w.endTime =#{endTime,jdbcType=TIMESTAMP},
+      w.dts = TIMESTAMPDIFF(MINUTE, w.startTime, #{endTime,jdbcType=TIMESTAMP})
+    </update>
+</mapper>

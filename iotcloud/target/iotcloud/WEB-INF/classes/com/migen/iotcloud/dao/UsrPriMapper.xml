@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.iotcloud.dao.UsrPriMapper">
+    <resultMap id="BaseResultMap" type="com.migen.iotcloud.entity.UsrPri">
+        <id column="upid" jdbcType="INTEGER" property="upid" />
+        <result column="usrid" jdbcType="INTEGER" property="usrid" />
+        <result column="uname" jdbcType="VARCHAR" property="uname" />
+        <result column="priid" jdbcType="VARCHAR" property="priid" />
+        <result column="dt" jdbcType="VARCHAR" property="dt" />
+        <result column="cid" jdbcType="INTEGER" property="cid" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      upid,usrid,uname,priid,dt,cid
+    </sql>
+
+    <select id="getUserPri" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from cusrpri
+        WHERE uname=#{uname,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

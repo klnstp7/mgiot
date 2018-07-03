@@ -1,0 +1,6 @@
+[iotcloud][INFO] [2018-07-03 18:51:12] org.springframework.web.servlet.FrameworkServlet.initServletBean(479) | FrameworkServlet 'mvc-dispatcher': initialization started
+[iotcloud][INFO] [2018-07-03 18:51:12] org.springframework.context.support.AbstractApplicationContext.prepareRefresh(513) | Refreshing WebApplicationContext for namespace 'mvc-dispatcher-servlet': startup date [Tue Jul 03 18:51:12 CST 2018]; parent: Root WebApplicationContext
+[iotcloud][INFO] [2018-07-03 18:51:12] org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(316) | Loading XML bean definitions from class path resource [spring-view.xml]
+[iotcloud][INFO] [2018-07-03 18:51:12] org.springframework.web.servlet.handler.AbstractUrlHandlerMapping.registerHandler(315) | Mapped URL path [/**] onto handler 'org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler#0'
+[iotcloud][INFO] [2018-07-03 18:51:12] org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer.postProcessTemplateLoaders(127) | ClassTemplateLoader for Spring macros added to FreeMarker configuration
+[iotcloud][INFO] [2018-07-03 18:51:12] org.springframework.web.servlet.FrameworkServlet.initServletBean(498) | FrameworkServlet 'mvc-dispatcher': initialization completed in 50 ms

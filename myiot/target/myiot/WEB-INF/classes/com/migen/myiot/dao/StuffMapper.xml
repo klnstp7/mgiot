@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.myiot.dao.StuffMapper">
+    <resultMap id="BaseResultMap" type="com.migen.myiot.entity.Stuff">
+        <id column="sid" jdbcType="INTEGER" property="sid" />
+        <result column="did" jdbcType="INTEGER" property="did" />
+        <result column="numAll" jdbcType="INTEGER" property="numAll" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="dt" jdbcType="VARCHAR" property="dt" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      sid,did,numAll,status,dt
+    </sql>
+
+    <insert id="insertStuff"  keyProperty="sid" useGeneratedKeys="true" parameterType="com.migen.myiot.entity.Stuff">
+        INSERT INTO stuff(
+                did,
+                numAll,
+                status,
+                dt
+             )
+            VALUES (
+                #{did,jdbcType=INTEGER},
+                #{numAll,jdbcType=INTEGER},
+                #{status,jdbcType=INTEGER},
+                #{dt,jdbcType=VARCHAR}
+            )
+    </insert>
+</mapper>

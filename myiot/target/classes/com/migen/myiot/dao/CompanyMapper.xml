@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.myiot.dao.CompanyMapper">
+    <resultMap id="BaseResultMap" type="com.migen.myiot.entity.Company">
+        <id column="cid" jdbcType="INTEGER" property="cid" />
+        <result column="company" jdbcType="VARCHAR" property="company" />
+        <result column="poi" jdbcType="VARCHAR" property="poi" />
+        <result column="ctype" jdbcType="INTEGER" property="ctype" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="address" jdbcType="VARCHAR" property="address" />
+        <result column="dt" jdbcType="VARCHAR" property="dt" />
+        <result column="bcid" jdbcType="VARCHAR" property="bcid" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      cid, company,poi,ctype,status,address,dt,bcid
+    </sql>
+
+    <sql id="Cond_Where_Clause">
+        <where>
+            <if test="company!=null and company!=''">
+                and company like concat('%', #{company,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="ctype!= 0">
+                and ctype =#{ctype,jdbcType=INTEGER}
+            </if>
+        </where>
+    </sql>
+
+    <select id="getAll"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from ccompany
+    </select>
+
+
+</mapper>

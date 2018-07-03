@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.iotcloud.dao.WarnMapper">
+    <resultMap id="BaseResultMap" type="com.migen.iotcloud.entity.Warn">
+        <id column="wid" jdbcType="INTEGER" property="wid" />
+        <result column="did" jdbcType="INTEGER" property="did" />
+        <result column="wtype" jdbcType="INTEGER" property="wtype" />
+        <result column="wtname" jdbcType="VARCHAR" property="wtname" />
+        <result column="info" jdbcType="VARCHAR" property="info" />
+        <result column="des" jdbcType="VARCHAR" property="des" />
+        <result column="ismail" jdbcType="INTEGER" property="ismail" />
+        <result column="ismodify" jdbcType="INTEGER" property="ismodify" />
+        <result column="fromthing" jdbcType="INTEGER" property="fromthing" />
+        <result column="errpri" jdbcType="INTEGER" property="errpri" />
+        <result column="dtmodify" jdbcType="VARCHAR" property="dtmodify" />
+        <result column="dt" jdbcType="TIMESTAMP" property="dt" />
+        <result column="ciduse" jdbcType="INTEGER" property="ciduse" />
+        <result column="company" jdbcType="VARCHAR" property="company" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        wid,did,wtype,wtname,info,des,dt,ismail,ismodify,fromthing,errpri,dtmodify,ciduse,bcid,company
+    </sql>
+
+    <select id="queryWarnFirst" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from warn where did=#{VALUE} and dtmodify =''
+    </select>
+
+    <!--警告监控-->
+    <resultMap id="MonitorResultMap" type="com.migen.iotcloud.entity.WarnMonitor">
+        <result column="company" jdbcType="VARCHAR" property="company" />
+        <result column="didshow" jdbcType="VARCHAR" property="didshow" />
+        <result column="moduleid" jdbcType="VARCHAR" property="moduleid" />
+        <result column="usecom" jdbcType="VARCHAR" property="usecom" />
+        <result column="wtname" jdbcType="VARCHAR" property="wtname" />
+        <result column="errpri" jdbcType="INTEGER" property="errpri" />
+        <result column="dt" jdbcType="TIMESTAMP" property="dt" />
+    </resultMap>
+
+    <sql id="Monitor_Column_List">
+        c.company,b.didshow,b.moduleid,b.usecom,a.wtname,a.errpri,a.dt
+    </sql>
+
+    <sql id="Cond_Where_Clause">
+        <where>
+            <if test="scompany!=null and scompany!=''">
+                and c.company like concat('%', #{scompany,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="device!=null and device!=''">
+                and  (
+                b.didshow  like concat('%', #{device,jdbcType=VARCHAR}, '%')
+                OR
+                b.moduleid  like concat('%', #{device,jdbcType=VARCHAR}, '%')
+                OR
+                b.gencom like concat('%', #{device,jdbcType=VARCHAR}, '%')
+                )
+            </if>
+            <if test="startTime!=null and startTime!=''">
+               and DATE_FORMAT(a.dt, '%Y-%m-%d')&gt;=#{startTime,jdbcType=VARCHAR}
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                and DATE_FORMAT(a.dt, '%Y-%m-%d')&lt;=#{endTime,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </sql>
+    <select id="selectByCond" parameterType="com.migen.iotcloud.condition.WarnCondition" resultMap="MonitorResultMap">
+        select
+        <include refid="Monitor_Column_List" />
+        FROM warn a INNER JOIN device b
+        ON a.did=b.did
+        INNER JOIN ccompany c
+        ON c.cid=b.ciduse
+        <if test="_parameter != null">
+            <include refid="Cond_Where_Clause" />
+        </if>
+        order by a.wid desc
+        <if test="limit > 0">
+            limit ${start},${limit}
+        </if>
+    </select>
+
+    <select id="countByCond" parameterType="com.migen.iotcloud.condition.WarnCondition" resultType="java.lang.Integer">
+        select count(1)
+        FROM warn a INNER JOIN device b
+        ON a.did=b.did
+        INNER JOIN ccompany c
+        ON c.cid=b.ciduse
+        <if test="_parameter != null">
+            <include refid="Cond_Where_Clause" />
+        </if>
+    </select>
+</mapper>

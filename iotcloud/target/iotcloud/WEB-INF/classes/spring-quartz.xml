@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <!-- 定义核心调度器-->
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="issueLocationTrigger" />
+                <ref bean="issueProductTrigger" />
+                <ref bean="checkOnlineTrigger" />
+            </list>
+        </property>
+        <property name="autoStartup" value="true"></property>
+    </bean>
+
+    <!-- 设备定位命令-->
+    <bean  id="issueLocationService" class="com.migen.iotcloud.quartzs.IssueLocationJob">
+    </bean>
+    <bean id="issueLocationJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="issueLocationService"> </property>
+        <property name="targetMethod" value="execute" />
+    </bean>
+    <bean id="issueLocationTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="issueLocationJob"/>
+        <property name="cronExpression" value="0 0 0/1 * * ?"/>
+    </bean>
+
+    <!-- 设备生产命令-->
+    <bean  id="issueProductService" class="com.migen.iotcloud.quartzs.IssueProductJob">
+    </bean>
+    <bean id="issueProductJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="issueProductService"> </property>
+        <property name="targetMethod" value="execute" />
+    </bean>
+    <bean id="issueProductTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="issueProductJob"/>
+        <property name="cronExpression" value="0 0/30 * * * ?"/>
+    </bean>
+
+    <!-- 检查在线-->
+    <bean  id="checkOnlineService" class="com.migen.iotcloud.quartzs.CheckOnlineJob">
+    </bean>
+    <bean id="checkOnlineJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="checkOnlineService"> </property>
+        <property name="targetMethod" value="execute" />
+    </bean>
+    <bean id="checkOnlineTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="checkOnlineJob"/>
+        <property name="cronExpression" value="0 0/30 * * * ?"/>
+    </bean>
+</beans>

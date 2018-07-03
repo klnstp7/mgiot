@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.iotcloud.dao.RolePriMapper">
+    <resultMap id="BaseResultMap" type="com.migen.iotcloud.entity.RolePri">
+        <id column="rpid" jdbcType="INTEGER" property="rpid" />
+        <result column="rid" jdbcType="INTEGER" property="rid" />
+        <result column="mid" jdbcType="INTEGER" property="mid" />
+        <result column="dt" jdbcType="TIMESTAMP" property="dt" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        rpid,rid, mid,dt
+    </sql>
+
+    <select id="getPriByRoleId" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from crolepri
+        where rid=#{rid,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insertRolePri" parameterType="com.migen.iotcloud.entity.RolePri">
+        INSERT INTO crolepri
+        (rid,
+        mid,
+        dt)
+        VALUES (
+        #{rid,jdbcType=INTEGER},
+        #{mid,jdbcType=INTEGER},
+        #{dt,jdbcType=TIMESTAMP})
+    </insert>
+
+    <delete id="deletePriByMid" parameterType="java.lang.Integer">
+        delete from crolepri
+        where mid = #{mid,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deletePriByRid" parameterType="java.lang.Integer">
+        delete from crolepri
+        where rid = #{rid,jdbcType=INTEGER}
+    </delete>
+</mapper>

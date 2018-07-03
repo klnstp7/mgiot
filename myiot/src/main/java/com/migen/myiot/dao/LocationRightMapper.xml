@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.myiot.dao.LocationRightMapper">
+    <resultMap id="BaseResultMap" type="com.migen.myiot.entity.LocationRight">
+        <id column="lid" jdbcType="INTEGER" property="lid" />
+        <id column="did" jdbcType="INTEGER" property="did" />
+        <result column="didShow" jdbcType="VARCHAR" property="didShow" />
+        <result column="longitude" jdbcType="DOUBLE" property="longitude" />
+        <result column="latitude" jdbcType="DOUBLE" property="latitude" />
+        <result column="country" jdbcType="VARCHAR" property="country" />
+        <result column="province" jdbcType="VARCHAR" property="province" />
+        <result column="city" jdbcType="VARCHAR" property="city" />
+        <result column="address" jdbcType="VARCHAR" property="address" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="dt" jdbcType="VARCHAR" property="dt" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+     lid,did,didshow,longitude,latitude,country,province,city,address,status,dt
+    </sql>
+
+    <select id="getLocationRightByDid"  parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from locationright
+        where  did=#{VALUE}
+        and status=1
+    </select>
+
+    <insert id="insertLocationRight" keyProperty="lid" useGeneratedKeys="true" parameterType="com.migen.myiot.entity.LocationRight">
+        INSERT INTO locationright
+            (did,didShow,longitude,latitude,country,province,city,address,STATUS,dt)
+            VALUES (
+                    #{did,jdbcType=INTEGER},
+                    #{didShow,jdbcType=VARCHAR},
+                    #{longitude,jdbcType=DOUBLE},
+                    #{latitude,jdbcType=DOUBLE},
+                    #{country,jdbcType=VARCHAR},
+                    #{province,jdbcType=VARCHAR},
+                    #{city,jdbcType=VARCHAR},
+                    #{address,jdbcType=VARCHAR},
+                    #{status,jdbcType=INTEGER},
+                    #{dt,jdbcType=VARCHAR}
+                    )
+    </insert>
+
+    <update id="updateStatus" parameterType="com.migen.myiot.entity.LocationRight">
+        update locationright set status =  #{status,jdbcType=INTEGER} where  status=1 and  lid = #{lid,jdbcType=INTEGER}
+    </update>
+</mapper>

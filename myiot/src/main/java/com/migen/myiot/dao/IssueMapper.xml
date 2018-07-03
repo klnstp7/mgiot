@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.myiot.dao.IssueMapper">
+    <resultMap id="BaseResultMap" type="com.migen.myiot.entity.Issue">
+        <id column="iid" jdbcType="INTEGER" property="iid" />
+        <result column="did" jdbcType="INTEGER" property="did" />
+        <result column="uname" jdbcType="VARCHAR" property="uname" />
+        <result column="flag" jdbcType="INTEGER" property="flag" />
+        <result column="itype" jdbcType="VARCHAR" property="itype" />
+        <result column="des" jdbcType="VARCHAR" property="des" />
+        <result column="data" jdbcType="VARCHAR" property="data" />
+        <result column="activeSeq" jdbcType="VARCHAR" property="activeSeq" />
+        <result column="dt" jdbcType="VARCHAR" property="dt" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      iid,did,uname,flag,itype,des,activeSeq,dt
+    </sql>
+
+    <select id="getActiveCountBydid" resultType="java.lang.Integer">
+        select count(1) from issue
+        where did!=#{did,jdbcType=INTEGER}
+        and flag=0
+    </select>
+
+    <insert id="insertIssue"  keyProperty="iid" useGeneratedKeys="true" parameterType="com.migen.myiot.entity.Issue">
+        INSERT INTO issue(
+                did,
+                uname,
+                flag,
+                itype,
+                des,
+                data,
+                activeSeq,
+                dt
+             )
+            VALUES (
+                #{did,jdbcType=INTEGER},
+                #{uname,jdbcType=VARCHAR},
+                #{flag,jdbcType=INTEGER},
+                #{itype,jdbcType=VARCHAR},
+                #{des,jdbcType=VARCHAR},
+                #{data,jdbcType=VARCHAR},
+                #{activeSeq,jdbcType=VARCHAR},
+                #{dt,jdbcType=VARCHAR}
+            )
+    </insert>
+
+     <update id="updateIssue" parameterType="com.migen.myiot.entity.Issue">
+         update issue set flag=#{flag,jdbcType=INTEGER} where iid=#{iid,jdbcType=INTEGER}
+     </update>
+</mapper>

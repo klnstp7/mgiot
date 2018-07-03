@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.iotcloud.dao.CompanyMapper">
+    <resultMap id="BaseResultMap" type="com.migen.iotcloud.entity.Company">
+        <id column="cid" jdbcType="INTEGER" property="cid" />
+        <result column="company" jdbcType="VARCHAR" property="company" />
+        <result column="poi" jdbcType="VARCHAR" property="poi" />
+        <result column="ctype" jdbcType="INTEGER" property="ctype" />
+        <result column="ctname" jdbcType="INTEGER" property="ctname" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="address" jdbcType="VARCHAR" property="address" />
+        <result column="dt" jdbcType="TIMESTAMP" property="dt" />
+        <result column="bcid" jdbcType="VARCHAR" property="bcid" />
+        <result column="parentid" jdbcType="INTEGER" property="parentid" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      a.cid, a.company,a.poi,a.ctype,b.ctname, a.status,a.address,a.dt,a.bcid,a.parentid
+    </sql>
+
+    <sql id="Cond_Where_Clause">
+        <where>
+            <if test="company!=null and company!=''">
+                and a.company like concat('%', #{company,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="ctype!= 0">
+                and a.ctype =#{ctype,jdbcType=INTEGER}
+            </if>
+        </where>
+    </sql>
+
+    <select id="getAll"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from ccompany a inner join ccompanytype b
+        on a.ctype=b.ctype
+    </select>
+
+    <select id="selectByCond" parameterType="com.migen.iotcloud.condition.CompanyCondition" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from ccompany a inner join ccompanytype b
+        on a.ctype=b.ctype
+        <if test="_parameter != null">
+            <include refid="Cond_Where_Clause" />
+        </if>
+        order by cid desc
+        <if test="limit > 0">
+            limit ${start},${limit}
+        </if>
+    </select>
+
+    <select id="countByCond" parameterType="com.migen.iotcloud.condition.CompanyCondition" resultType="java.lang.Integer">
+        select count(1)
+        from ccompany a inner join ccompanytype b
+        on a.ctype=b.ctype
+        <if test="_parameter != null">
+            <include refid="Cond_Where_Clause" />
+        </if>
+    </select>
+
+    <select id="getCompanyById" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from ccompany a inner join ccompanytype b
+        on a.ctype=b.ctype
+        where a.cid=#{cid,jdbcType=INTEGER}
+    </select>
+
+    <select id="checkIsExists" parameterType="com.migen.iotcloud.entity.Company" resultType="java.lang.Integer">
+        select count(1) from ccompany
+        where company=#{company,jdbcType=VARCHAR} and cid!=#{cid,jdbcType=INTEGER}
+    </select>
+
+    <select id="getCompanyByType"   parameterType="java.util.List" resultMap="BaseResultMap">
+        select    <include refid="Base_Column_List" />
+       from ccompany a inner join ccompanytype b
+        on a.ctype=b.ctype
+        where a.ctype in
+        <foreach collection="list" item="item" index="index"
+                 open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <select id="getChildrenByParentId" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from ccompany a INNER join ccompanytype b
+        on a.ctype=b.ctype
+        WHERE IFNULL(a.parentid,0) =IFNULL(#{parentid,jdbcType=VARCHAR},0)
+        and status=1
+    </select>
+
+    <select id="getChildren" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from ccompany a INNER join ccompanytype b
+        on a.ctype=b.ctype
+        WHERE a.parentid =#{parentid,jdbcType=VARCHAR}
+        and status=1
+    </select>
+
+
+    <insert id="insertCompany" parameterType="com.migen.iotcloud.entity.Company">
+        insert into ccompany (company, ctype,status,address,dt,usrid,bcid,parentid)
+        values (#{company,jdbcType=VARCHAR}, #{ctype,jdbcType=INTEGER},
+        #{status,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, #{dt,jdbcType=TIMESTAMP},
+        #{usrid,jdbcType=INTEGER}, #{bcid,jdbcType=VARCHAR},#{parentid,jdbcType=INTEGER})
+    </insert>
+
+    <update id="updateCompany" parameterType="com.migen.iotcloud.entity.Company">
+        update ccompany
+        set company = #{company,jdbcType=VARCHAR},
+          ctype = #{ctype,jdbcType=INTEGER},
+          status = #{status,jdbcType=INTEGER},
+          address = #{address,jdbcType=VARCHAR},
+          usrid = #{usrid,jdbcType=INTEGER}
+       where cid = #{cid,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteCompany" parameterType="java.lang.Integer">
+        delete from ccompany
+        where cid= #{cid,jdbcType=INTEGER}
+    </delete>
+</mapper>

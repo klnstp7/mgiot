@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.iotcloud.dao.CompanyTypeMapper">
+    <resultMap id="BaseResultMap" type="com.migen.iotcloud.entity.CompanyType">
+        <id column="ctid" jdbcType="INTEGER" property="ctid" />
+        <result column="ctype" jdbcType="INTEGER" property="ctype" />
+        <result column="ctname" jdbcType="VARCHAR" property="ctname" />
+        <result column="dt" jdbcType="TIMESTAMP" property="dt" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      ctid, ctype,ctname,dt
+    </sql>
+
+    <select id="getAll"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from ccompanytype
+    </select>
+</mapper>

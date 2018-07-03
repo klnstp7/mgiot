@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.iotcloud.dao.UpSpwdMapper">
+    <resultMap id="BaseResultMap" type="com.migen.iotcloud.entity.UpSpwd">
+        <id column="swid" jdbcType="INTEGER" property="swid" />
+        <result column="did" jdbcType="INTEGER" property="did" />
+        <result column="spwd" jdbcType="VARCHAR" property="spwd" />
+        <result column="dt" jdbcType="VARCHAR" property="dt" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      swid,did,spwd,dt
+    </sql>
+
+    <delete id="deleteUpSpwd" parameterType="java.lang.Integer">
+        delete from upspwd where did= #{did,jdbcType=INTEGER};
+    </delete>
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.myiot.dao.WarnMapper">
+    <resultMap id="BaseResultMap" type="com.migen.myiot.entity.Warn">
+        <id column="wid" jdbcType="INTEGER" property="wid" />
+        <result column="did" jdbcType="INTEGER" property="did" />
+        <result column="wtype" jdbcType="INTEGER" property="wtype" />
+        <result column="wtname" jdbcType="VARCHAR" property="wtname" />
+        <result column="info" jdbcType="VARCHAR" property="info" />
+        <result column="des" jdbcType="VARCHAR" property="des" />
+        <result column="ismail" jdbcType="INTEGER" property="ismail" />
+        <result column="ismodify" jdbcType="INTEGER" property="ismodify" />
+        <result column="fromthing" jdbcType="INTEGER" property="fromthing" />
+        <result column="errpri" jdbcType="INTEGER" property="errpri" />
+        <result column="dtmodify" jdbcType="VARCHAR" property="dtmodify" />
+        <result column="dt" jdbcType="TIMESTAMP" property="dt" />
+        <result column="ciduse" jdbcType="INTEGER" property="ciduse" />
+        <result column="company" jdbcType="VARCHAR" property="company" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        wid,did,wtype,wtname,info,des,dt,ismail,ismodify,fromthing,errpri,dtmodify,ciduse,bcid,company
+    </sql>
+
+    <insert id="insertWarn" keyProperty="wid" useGeneratedKeys="true" parameterType="com.migen.myiot.entity.Warn">
+        INSERT INTO warn
+        (did,wtype,wtname,info,des,fromthing,errpri,ciduse,company,dt)
+        VALUES (
+            #{did,jdbcType=INTEGER},
+            #{wtype,jdbcType=INTEGER},
+            #{wtname,jdbcType=VARCHAR},
+            #{info,jdbcType=VARCHAR},
+            #{des,jdbcType=VARCHAR},
+            #{fromthing,jdbcType=VARCHAR},
+            #{errpri,jdbcType=INTEGER},
+            #{ciduse,jdbcType=INTEGER},
+            #{company,jdbcType=VARCHAR},
+            #{dt,jdbcType=TIMESTAMP}
+        )
+    </insert>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migen.iotcloud.dao.IssueMapper">
+    <resultMap id="BaseResultMap" type="com.migen.iotcloud.entity.Issue">
+        <id column="iid" jdbcType="INTEGER" property="iid" />
+        <result column="did" jdbcType="INTEGER" property="did" />
+        <result column="uname" jdbcType="VARCHAR" property="uname" />
+        <result column="flag" jdbcType="INTEGER" property="flag" />
+        <result column="itype" jdbcType="VARCHAR" property="itype" />
+        <result column="des" jdbcType="VARCHAR" property="des" />
+        <result column="data" jdbcType="VARCHAR" property="data" />
+        <result column="activeSeq" jdbcType="VARCHAR" property="activeSeq" />
+        <result column="dt" jdbcType="VARCHAR" property="dt" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      iid,did,uname,flag,itype,des,activeSeq,dt
+    </sql>
+
+    <delete id="deleteIssue" parameterType="java.lang.Integer">
+        delete from issue where did= #{did,jdbcType=INTEGER};
+    </delete>
+</mapper>
